@@ -1,6 +1,7 @@
 package main
 
 // @TODO: caching ? I don't care for now.
+// @TODO: with caching: handle when the clients cancels its request (meh.)
 
 import (
 	"net/http"
@@ -37,7 +38,7 @@ func mp3Handler(w http.ResponseWriter, r *http.Request) {
 	cmdName := "./stream_mp3.sh"
 	cmdArgs := []string{id, info.Title, info.Uploader}
 	w.Header().Set("Content-Type", "audio/mpeg")
-	w.Header().Set("Content-Disposition", "attachment; filename=" + info.Title + ".mp3")
+	w.Header().Set("Content-Disposition", "attachment; filename='" + info.Title + ".mp3'")
 	runCommand(w, cmdName, cmdArgs);
 }
 
