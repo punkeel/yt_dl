@@ -10,17 +10,30 @@ import (
 	"os"
 	"io"
 	"encoding/json"
+	"net"
 )
 
 type YTInfo struct {
-	Uploader string
-	Title    string
+	Uploader  string
+	Title     string
+	Thumbnail string
 }
 
 func main() {
 	http.HandleFunc("/mp3/", mp3Handler)
-	http.HandleFunc("/", indexHandler)
-	http.ListenAndServe(":8080", nil)
+	http.HandleFunc("/infos/", infosHandler)
+	fs := http.FileServer(http.Dir("static"))
+	http.Handle("/", fs)
+	l, err := net.Listen("unix", "/tmp/yt_dl.sock")
+	if err != nil {
+		fmt.Printf("%s\n", err)
+	} else {
+		err := http.Serve(l, nil)
+		if err != nil {
+			panic(err)
+		}
+		// http.ListenAndServe(":8080", nil)
+	}
 }
 
 func mp3Handler(w http.ResponseWriter, r *http.Request) {
@@ -42,8 +55,21 @@ func mp3Handler(w http.ResponseWriter, r *http.Request) {
 	runCommand(w, cmdName, cmdArgs);
 }
 
-func indexHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h1>Youtube-DL</h1><br />/mp3/youtube_id")
+func infosHandler(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Path[len("/infos/"):]
+	if len(id) != 11 {
+		fmt.Fprintf(w, `{"error": true}`)
+		return
+	}
+	info := getInfo(id)
+	w.Header().Set("Content-Type", "application/json")
+
+	if info.Title == "" {
+		fmt.Fprintf(w, `{"error": true}`)
+		return
+	}
+	d, _ := json.Marshal(info)
+	w.Write(d)
 }
 
 func runCommand(res http.ResponseWriter, cmdName string, cmdArgs []string) {

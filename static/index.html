@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>yt_dl</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <h1>yt_dl</h1>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Download MP3 from Youtube</h3>
+        </div>
+        <div class="panel-body">
+            <form id="form">
+                <div class="form-group">
+                    <input type="text" class="form-control" id="youtubeLink" placeholder="http://youtu.be/kosqnsqdqsd">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" id="yt">
+        <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+            <div class="thumbnail">
+                <img src="" id="logo">
+
+                <div class="caption">
+                    <h3 id="title"></h3>
+
+                    <p><a href="" class="btn btn-primary" id="download" download role="button">Download!</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    $(function () {
+        var id;
+
+        function matchYtUrl(url) {
+            var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+            return (url.match(p)) ? RegExp.$1 : false;
+        }
+
+        function loadInfos(yt) {
+            $.getJSON('/infos/' + yt, function (data) {
+                $('#title').html(data.Title);
+                $('#logo').attr('src', data.Thumbnail);
+                $('#yt').fadeIn(200);
+                $('#download').attr('href', '/mp3/' + yt)
+
+            });
+        }
+
+        $('#form').find('input[type="text"]').keyup(function () {
+            if (yt = matchYtUrl($(this).val())) {
+                if (yt == id) {
+                    return
+                }
+
+                $('#title').empty();
+                $('#yt').hide();
+
+                id = yt;
+                loadInfos(id);
+            }
+            else {
+                $('#yt').hide();
+            }
+        }).trigger('keyup');
+    });
+</script>
+</body>
+</html>
