@@ -1,1 +1,1 @@
-web: go run yt_dl.go
+web: yt_dl
