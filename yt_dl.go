@@ -25,8 +25,8 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
 
-	port := os.Getenv("PORT")
-	if port != nil {
+	port, exists := os.LookupEnv("PORT")
+	if exists {
 		http.ListenAndServe(":" + port, nil)
 	}else {
 		l, err := net.Listen("unix", "/tmp/yt_dl.sock")
