@@ -24,15 +24,21 @@ func main() {
 	http.HandleFunc("/infos/", infosHandler)
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
-	l, err := net.Listen("unix", "/tmp/yt_dl.sock")
-	if err != nil {
-		fmt.Printf("%s\n", err)
-	} else {
-		err := http.Serve(l, nil)
+
+	port := os.Getenv("PORT")
+	if port != nil {
+		http.ListenAndServe(":" + port, nil)
+	}else {
+		l, err := net.Listen("unix", "/tmp/yt_dl.sock")
 		if err != nil {
-			panic(err)
+			fmt.Printf("%s\n", err)
+		} else {
+			err := http.Serve(l, nil)
+			if err != nil {
+				panic(err)
+			}
+
 		}
-		// http.ListenAndServe(":8080", nil)
 	}
 }
 
