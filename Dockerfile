@@ -9,4 +9,6 @@ RUN pip install youtube-dl==2015.08.28
 EXPOSE 80
 ENV PORT 80
 
-ENTRYPOINT ["go run yt_dl.go"]
+RUN go build -o yt_dl .
+
+ENTRYPOINT ["./yt_dl"]
