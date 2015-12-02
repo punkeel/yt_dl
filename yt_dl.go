@@ -11,6 +11,7 @@ import (
 	"io"
 	"encoding/json"
 	"net"
+	"strings"
 )
 
 type YTInfo struct {
@@ -22,6 +23,7 @@ type YTInfo struct {
 func main() {
 	http.HandleFunc("/mp3/", mp3Handler)
 	http.HandleFunc("/infos/", infosHandler)
+	http.HandleFunc("/env", envHandler)
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
 
@@ -42,6 +44,13 @@ func main() {
 			}
 
 		}
+	}
+}
+
+func envHandler(w http.ResponseWriter, r *http.Request) {
+	for _, e := range os.Environ() {
+		pair := strings.Split(e, "=")
+		fmt.Fprintln(w, pair[0])
 	}
 }
 
