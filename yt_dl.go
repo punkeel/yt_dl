@@ -27,9 +27,12 @@ func main() {
 
 	port, exists := os.LookupEnv("PORT")
 	if exists {
+		fmt.Printf("Starting server on port %d\n", port)
 		http.ListenAndServe(":" + port, nil)
 	}else {
-		l, err := net.Listen("unix", "/tmp/yt_dl.sock")
+		socket := "/tmp/yt_dl.sock"
+		fmt.Printf("Starting server on socket %s\n", socket)
+		l, err := net.Listen("unix", socket)
 		if err != nil {
 			fmt.Printf("%s\n", err)
 		} else {
