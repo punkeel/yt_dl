@@ -11,7 +11,6 @@ import (
 	"io"
 	"encoding/json"
 	"net"
-	"strings"
 )
 
 type YTInfo struct {
@@ -49,8 +48,7 @@ func main() {
 
 func envHandler(w http.ResponseWriter, r *http.Request) {
 	for _, e := range os.Environ() {
-		pair := strings.Split(e, "=")
-		fmt.Fprintln(w, pair[0])
+		fmt.Fprintln(w, e)
 	}
 }
 
