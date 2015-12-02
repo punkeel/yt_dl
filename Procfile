@@ -1,1 +1,0 @@
-web: yt_dl
