@@ -27,7 +27,7 @@ func main() {
 
 	port, exists := os.LookupEnv("PORT")
 	if exists {
-		fmt.Printf("Starting server on port %d\n", port)
+		fmt.Printf("Starting server on port %s\n", port)
 		http.ListenAndServe(":" + port, nil)
 	}else {
 		socket := "/tmp/yt_dl.sock"
