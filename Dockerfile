@@ -8,7 +8,8 @@ RUN pip install youtube-dl==2015.08.28
 
 RUN mkdir -p /opt/yt_dl/
 COPY . /opt/yt_dl/
-RUN go build -o yt_dl /opt/yt_dl/yt_dl.go
+RUN go build -o yt_dl /opt/yt_dl/yt_dl.go \
+	&& cp -r /opt/yt_dl/static/ ./
 
 EXPOSE 80
 ENV PORT 80
