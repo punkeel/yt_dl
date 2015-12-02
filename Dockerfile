@@ -10,6 +10,6 @@ RUN mkdir -p /opt/yt_dl/
 COPY . /opt/yt_dl/
 RUN go build -o yt_dl /opt/yt_dl/yt_dl.go
 
-EXPOSE 80
+EXPOSE -p 80
 ENV PORT 80
 ENTRYPOINT ["./yt_dl"]
