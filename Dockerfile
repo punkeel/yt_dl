@@ -10,7 +10,7 @@ RUN apk update --repository $EDGE_REPOSITORY \
 
 COPY . /opt/yt_dl/
 RUN go build -o yt_dl /opt/yt_dl/yt_dl.go \
-	&& cp -r /opt/yt_dl/ .
+	&& cp -r /opt/yt_dl/* ./
 
 EXPOSE 80
 ENV PORT 80
