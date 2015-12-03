@@ -3,7 +3,7 @@ ENV EDGE_REPOSITORY "http://dl-4.alpinelinux.org/alpine/edge/main/"
 
 RUN apk update --repository $EDGE_REPOSITORY \
 	&& apk add py-pip ca-certificates \
-	&& apk add ffmpeg avconv curl --repository $EDGE_REPOSITORY \
+	&& apk add ffmpeg curl --repository $EDGE_REPOSITORY \
 	&& rm -rf /var/cache/apk/* \
 	&& pip install youtube-dl==2015.08.28 \
 	&& mkdir -p /opt/yt_dl/
