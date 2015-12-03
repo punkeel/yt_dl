@@ -1,0 +1,15 @@
+[Unit]
+Description=MariaDB database
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=on-failure
+RestartSec=3
+ExecStartPre=-/usr/bin/docker kill yt_dl
+ExecStartPre=-/usr/bin/docker rm yt_dl
+ExecStart=/usr/bin/docker run --name=yt_dl quay.io/punkeel/yt_dl:master
+ExecStop=-/usr/bin/docker stop yt_dl
+
+[Install]
+WantedBy=multi-user.target
