@@ -117,7 +117,7 @@ func getInfo(youtubeID string) (YTInfo, error) {
 	cmd := exec.Command("youtube-dl", []string{"-j", youtubeID}...)
 	out, err := cmd.Output()
 	if err != nil {
-		return nil, err
+		return YTInfo{}, err
 	}
 	cmd.Start()
 	var res YTInfo
