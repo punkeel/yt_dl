@@ -121,8 +121,8 @@ func getInfo(youtubeID string) (YTInfo, error) {
 	}
 	cmd.Start()
 	var res YTInfo
-	if string(rune(out[0])) != '{' {
-		return nil, errors.New("yt-dl: could not fetch infos")
+	if rune(out[0]) != '{' {
+		return YTInfo{}, errors.New("yt-dl: could not fetch infos")
 	}
 	if err := json.Unmarshal(out, &res); err != nil {
 		panic(err)
