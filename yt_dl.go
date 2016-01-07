@@ -11,6 +11,7 @@ import (
 	"io"
 	"encoding/json"
 	"net"
+	"errors"
 )
 
 type YTInfo struct {
@@ -77,10 +78,9 @@ func infosHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{"error": true}`)
 		return
 	}
-	info := getInfo(id)
 	w.Header().Set("Content-Type", "application/json")
-
-	if info.Title == "" {
+	info, err := getInfo(id)
+	if err != nil || info.Title == "" {
 		fmt.Fprintf(w, `{"error": true}`)
 		return
 	}
@@ -110,7 +110,7 @@ func runCommand(res http.ResponseWriter, cmdName string, cmdArgs []string) {
 	pipeWriter.Close()
 }
 
-func getInfo(youtubeID string) YTInfo {
+func getInfo(youtubeID string) (YTInfo, error) {
 	cmd := exec.Command("youtube-dl", []string{"-j", youtubeID}...)
 	out, err := cmd.Output()
 	if err != nil {
@@ -119,11 +119,14 @@ func getInfo(youtubeID string) YTInfo {
 	}
 	cmd.Start()
 	var res YTInfo
+	if out[0] != "{" {
+		return nil, errors.New("yt-dl: could not fetch infos")
+	}
 	if err := json.Unmarshal(out, &res); err != nil {
 		panic(err)
 	}
 	fmt.Println(res)
-	return res
+	return res, nil
 }
 
 func writeCmdOutput(res http.ResponseWriter, pipeReader *io.PipeReader) {
