@@ -27,7 +27,7 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
 
-	port, exists := os.LookupEnv("PORT")
+	port, exists := os.Getenv("PORT")
 	if exists {
 		fmt.Printf("Starting server on port %s\n", port)
 		http.ListenAndServe(":" + port, nil)
@@ -59,8 +59,11 @@ func mp3Handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Invalid ID (!= 11 chr)")
 		return
 	}
-	info := getInfo(id)
-
+	info, err := getInfo(id)
+	if err != nil {
+		fmt.Fprintf(w, err.Error())
+		return
+	}
 	if info.Title == "" {
 		fmt.Fprintf(w, "Invalid video. (Wer is da title ?!)")
 		return
@@ -114,12 +117,11 @@ func getInfo(youtubeID string) (YTInfo, error) {
 	cmd := exec.Command("youtube-dl", []string{"-j", youtubeID}...)
 	out, err := cmd.Output()
 	if err != nil {
-		println("Err: ", err)
-		os.Exit(1)
+		return nil, err
 	}
 	cmd.Start()
 	var res YTInfo
-	if out[0] != "{" {
+	if string(rune(out[0])) != '{' {
 		return nil, errors.New("yt-dl: could not fetch infos")
 	}
 	if err := json.Unmarshal(out, &res); err != nil {
