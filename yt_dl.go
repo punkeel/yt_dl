@@ -28,7 +28,7 @@ func main() {
 	http.Handle("/", fs)
 
 	port := os.Getenv("PORT")
-	if len(port) == 0 {
+	if len(port) != 0 {
 		fmt.Printf("Starting server on port %s\n", port)
 		http.ListenAndServe(":" + port, nil)
 	}else {
