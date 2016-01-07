@@ -27,8 +27,8 @@ func main() {
 	fs := http.FileServer(http.Dir("static"))
 	http.Handle("/", fs)
 
-	port, exists := os.Getenv("PORT")
-	if exists {
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
 		fmt.Printf("Starting server on port %s\n", port)
 		http.ListenAndServe(":" + port, nil)
 	}else {
